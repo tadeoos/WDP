@@ -1,7 +1,13 @@
 let silnia n = 
 	let rec pom_sil x acc =
-		if x = 0 then acc else (pom_sil (x-1) (x*acc))
-	in if n<0 then failwith "invalid arg. n should be non negative" else pom_sil n 1;;
+		match x with
+		| 0 -> acc
+		| _ -> (pom_sil (x-1) (x*acc))
+	in match n with
+	| _ when n<0 -> 0		
+	| _ -> pom_sil n 1;;
+
+silnia 5;;	
 
 (* This function takes two rectangles specified as bottom-left 
 (first) and top-right (second) corners given by date 
