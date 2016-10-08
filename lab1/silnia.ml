@@ -1,7 +1,7 @@
 let silnia x = 
 	let rec pom_sil n acc =
 		if n = 0 then acc else (pom_sil (n-1) (n*acc))
-			in if x<0 then failwith "invalid arg. n should be non negative" else pom_sil x 1;;
+	in if x<0 then failwith "invalid arg. n should be non negative" else pom_sil x 1;;
 
 (* This function takes two rectangles specified as bottom-left 
 (first) and top-right (second) corners given by date 
