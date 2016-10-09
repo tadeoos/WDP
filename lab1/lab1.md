@@ -1,14 +1,18 @@
-# unix
+## unix
 
 ssh tt305885@students.mimuw.edu.pl
 
-top
-pytania? man top
-ps aux - podobny do topa
+`top`
 
-kill [PID]
-kill -9 [PID]
-killall [name]
+pytania? `man top`
+
+`ps aux` - podobny do topa
+
+`kill [PID]`
+
+`kill -9 [PID]`
+
+`killall [name]`
 
 ## oCAML
 
@@ -18,4 +22,4 @@ let silnia x = let rec pom_sil n a =  if n = 0 then 1 else a * (pom_sil (n-1) (n
 
 * wczytywanie w konsoli:
 
-    #use "[nazwa pliku]";;
+    `#use "[nazwa pliku]";;`
