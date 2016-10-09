@@ -13,7 +13,12 @@ let rect ((x1,y1),(x2,y2)) ((x3,y3),(x4,y4)) =
 	((max x1 x3, max y1 y3),(min x2 x4, min y2 y4));;
 
 (* list reverse *)
-
+let list_reverse l =
+  let rec help_list l acc =
+    match l with
+    | [] -> acc
+    | hd::tl -> help_list tl (hd::acc)
+  in help_list l [];;
 
 (* fibonacci *)
 let rec fib_num n =
