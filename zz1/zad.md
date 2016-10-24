@@ -2,9 +2,9 @@
 Tam gdzie dokonujemy pomiarów wielkości fizycznych, wyniki są obarczone pewnym błędem, np. 5m ± 10%. Każdą taką przybliżoną wartość traktujemy jak zbiór możliwych wartości. Zaimplementuj pakiet operacji arytmetycznych na takich przybliżonych wartościach zawierający:
 
 * konstruktory:
-        wartosc_dokladnosc x p = x ± p% (dla p > 0),
-        wartosc_od_do x y = (x+y)/2 ± (y-x)/2 (dla x < y),
-        wartosc_dokladna x = x ± 0
+    * wartosc_dokladnosc x p = x ± p% (dla p > 0),
+    * wartosc_od_do x y = (x+y)/2 ± (y-x)/2 (dla x < y),
+    * wartosc_dokladna x = x ± 0
 * selektory:
     * in_wartosc x y ⇔ wartość x może być równa y,
     * min_wartosc x = kres dolny możliwych wartości x (lub -∞ jeśli możliwe wartości x nie są ograniczone od dołu),
