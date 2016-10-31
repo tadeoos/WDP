@@ -88,3 +88,17 @@ assert (x = wartosc_od_do (2./.5.) (-1./.5.));
 let test = podzielic (wartosc_od_do 2. (-1.)) (wartosc_od_do (-5.) (-3.));;
 test_warotsc test 0.2 (-0.4);;
 druk "test" test;;
+
+(* [2;-1]+[-5;-1]=[-inf; inf] *)
+druk "t1" (plus (wartosc_od_do 2. (-1.)) (wartosc_od_do (-5.) (-1.)));;
+(* [2;-1]+[-1;1]=[1;0] *)
+druk "t2" (plus (wartosc_od_do 2. (-1.)) (wartosc_od_do (-1.) (1.)));;
+(* [-4;-1]+[2;-1]=[-inf;inf] *)
+druk "t4" (plus (wartosc_od_do (-4.) (-1.)) (wartosc_od_do 2. (-1.)));;
+(* [-0.5;1]+[2;-1]=[1.5;0] *)
+druk "t5" (plus (wartosc_od_do (-0.5) (1.)) (wartosc_od_do 2. (-1.)));;
+(* [-2;-0.5]+[2;-1]=[0;-1.5] *)
+druk "t6" (plus (wartosc_od_do (-2.) (-0.5)) (wartosc_od_do 2. (-1.)));;
+
+(* [4;-0.5]+[2;-1]=? *)
+druk "t7" (plus (wartosc_od_do (4.) (-0.5)) (wartosc_od_do 2. (-1.)));;
