@@ -9,13 +9,29 @@ type wartosc = { a : float; b : float }
 (* METODY POMOCNICZE *)
 
 (* niezwykly przedzial to taki ktory jest suma przedzialow od nieskonczonosci *)
-let czy_zwykly w = w.a<=w.b
+
+let rec print_list = function
+[] -> ()
+| e::l -> print_float e ; print_string " " ; print_list l
+
+let czy_zwykly w = w.a<=w.b || (w.a==neg_infinity && w.b==infinity)
 
 let skombinuj w1 w2 = [w1.a*.w2.a; w1.a*.w2.b; w1.b*.w2.b; w1.b*.w2.a]
 
 let odwrotnosc w = {a=1./.w.b; b=1./.w.a}
 
-let druk w = Printf.fprintf stdout "a=%f b=%f" w.a w.b
+(* let maxw w y =
+  match w,y with
+  | none,_ -> y
+  | _,none -> w
+  | _ -> max w y
+
+  let maxw w y =
+    match w,y with
+    | none,_ -> y
+    | _,none -> w
+    | _ -> min w y *)
+(* let druk w = Printf.fprintf stdout "a=%f b=%f" w.a w.b *)
 
 (* co zwracac tu?  *)
 let czy_cala w =
@@ -41,7 +57,7 @@ let wartosc_dokladnosc x p =
   in if x<0. then {a=(x+.delta); b=(x-.delta)} else {a=(x-.delta); b=(x+.delta)}
 
 let wartosc_od_do l r =
-  let _ = Printf.fprintf stdout "%f %f \n" l r in
+  (* let _ = Printf.fprintf stdout "%f %f \n" l r in *)
   {a=l; b=r}
 
 let wartosc_dokladna x = {a=x; b=x}
@@ -52,6 +68,7 @@ let in_wartosc w x =
   | false -> w.a <= x || w.b >= x
 
 let min_wartosc w =
+  let _ = Printf.fprintf stdout "min war! %f %f \n" w.a w.b in
   match czy_zwykly w with
   | true -> w.a
   | false -> neg_infinity
@@ -76,16 +93,21 @@ let plus w1 w2 =
 
 (* val minus:     wartosc -> wartosc -> wartosc *)
 
-let minus wartosc1 wartosc2 =
-  {a=(wartosc1.a -. wartosc2.b); b=(wartosc1.b -. wartosc2.a)}
+let minus w1 w2 =
+  if czy_zwykly w1 && czy_zwykly w2
+  then {a=(w1.a -. w2.b); b=(w1.b -. w2.a)}
+  else czy_cala {a=(w1.a +. (min w2.a w2.b)); b=(w1.a -. (max 0. w2.b))}
 
 
 (* val razy:      wartosc -> wartosc -> wartosc *)
 (* val podzielic: wartosc -> wartosc -> wartosc *)
 
 let razy w1 w2 =
+  let _ = Printf.fprintf stdout "razy! w1=%f %f; w2=%f %f \n" w1.a w1.b w2.a w2.b in
   let komb = skombinuj w1 w2
-  in {a=minl komb; b=maxl komb}
+  in if czy_zwykly w1 && czy_zwykly w2
+  then {a=minl komb; b=maxl komb}
+  else {a=maxl komb; b=minl komb}
 
 let podzielic w1 w2 =
   match in_wartosc w2 0. with
