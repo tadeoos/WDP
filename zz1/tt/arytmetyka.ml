@@ -2,59 +2,95 @@
 
 type wartosc = { a : float; b : float }
 
+
 (* metoda pomocnicza mówiaca o tym czy float jest okreslony *)
-let okreslone x = x != infinity && x != neg_infinity && x != nan;;
+(* let okreslone x = x != infinity && x != neg_infinity && x != nan *)
+
+(* METODY POMOCNICZE *)
+
+(* niezwykly przedzial to taki ktory jest suma przedzialow od nieskonczonosci *)
+let czy_zwykly w = w.a<=w.b
+
+let skombinuj w1 w2 = [w1.a*.w2.a; w1.a*.w2.b; w1.b*.w2.b; w1.b*.w2.a]
+
+let odwrotnosc w = {a=1./.w.b; b=1./.w.a}
+
+let druk w = Printf.fprintf stdout "a=%f b=%f" w.a w.b
+
+(* co zwracac tu?  *)
+let czy_cala w =
+  if czy_zwykly w
+  then {a=neg_infinity; b=infinity}
+  else w
+let minl l =
+  let rec help l acc =
+    match l with
+    | [] -> acc
+    | h::t -> if h<acc then help t h else help t acc
+  in help l infinity
+
+let maxl l =
+  let rec help l acc =
+    match l with
+    | [] -> acc
+    | h::t -> if h>acc then help t h else help t acc
+  in help l neg_infinity
 
 let wartosc_dokladnosc x p =
-  let p = x /. p in
-  {a=(x-.p); b=(x+.p)}
+  let delta = (x*.p)/.100.
+  in if x<0. then {a=(x+.delta); b=(x-.delta)} else {a=(x-.delta); b=(x+.delta)}
 
 let wartosc_od_do l r =
-  if l <= r then {a=l; b=r}
-  else failwith 'lewy brzeg przedziału nie może być większy od prawego'
+  let _ = Printf.fprintf stdout "%f %f \n" l r in
+  {a=l; b=r}
 
-let wartosc_dokladna x =
-  {a=x; b=x}
+let wartosc_dokladna x = {a=x; b=x}
 
-(* in_wartosc w x = x \in w *)
-val in_wartosc: wartosc -> float -> bool
 let in_wartosc w x =
-  w.a <= x && w.b >= x
+  match czy_zwykly w with
+  | true -> w.a <= x && w.b >= x
+  | false -> w.a <= x || w.b >= x
 
-(* min_wartosc w = najmniejsza możliwa wartość w,   *)
-(* lub neg_infinity jeśli brak dolnego ograniczenia.*)
-val min_wartosc: wartosc -> float
-let min_wartosc w = w.a
+let min_wartosc w =
+  match czy_zwykly w with
+  | true -> w.a
+  | false -> neg_infinity
 
-(* max_wartosc w = największa możliwa wartość w,    *)
-(* lub infinity jeśli brak górnego ograniczenia.    *)
-val max_wartosc: wartosc -> float
-let max_wartosc w = w.b
-(* środek przedziału od min_wartosc do max_wartosc, *)
-(* lub nan jeśli min i max_wartosc nie są określone.*)
-val sr_wartosc:  wartosc -> float
-
-
-(* AAA: pierwsze pytanie -- jeśli min LUB max nie sa okreslone ?? *)
+let max_wartosc w =
+  match czy_zwykly w with
+  | true -> w.b
+  | false -> infinity
 
 let sr_wartosc w =
-  if okreslone(w.a) && okreslone(w.b) then (w.a +. w.b)/.2. else nan
+  match czy_zwykly w with
+  | true -> (w.a +. w.b)/.2.
+  | false -> nan
 
 (* Operacje arytmetyczne na niedokładnych wartościach. *)
-val plus:      wartosc -> wartosc -> wartosc
+(* val plus:      wartosc -> wartosc -> wartosc *)
 
-let plus wartosc1 wartosc2 =
-  {a=(wartosc1.a +. wartosc2.a); b=(wartosc1.b +. wartosc2.b)}
+let plus w1 w2 =
+  if czy_zwykly w1 && czy_zwykly w2
+  then {a=(w1.a +. w2.a); b=(w1.b +. w2.b)}
+  else czy_cala {a=(w1.a +. (min w2.a w2.b)); b=(w1.b +. (max w2.a w2.b))}
 
-val minus:     wartosc -> wartosc -> wartosc
+(* val minus:     wartosc -> wartosc -> wartosc *)
 
 let minus wartosc1 wartosc2 =
-  {a=(wartosc1.a -. wartosc2.b); b=(wartosc1.b +. wartosc2.a)}
+  {a=(wartosc1.a -. wartosc2.b); b=(wartosc1.b -. wartosc2.a)}
 
 
-val razy:      wartosc -> wartosc -> wartosc
-val podzielic: wartosc -> wartosc -> wartosc
+(* val razy:      wartosc -> wartosc -> wartosc *)
+(* val podzielic: wartosc -> wartosc -> wartosc *)
 
+let razy w1 w2 =
+  let komb = skombinuj w1 w2
+  in {a=minl komb; b=maxl komb}
+
+let podzielic w1 w2 =
+  match in_wartosc w2 0. with
+  | false -> razy w1 (odwrotnosc w2)
+  | true -> {a=max (w1.a/.w2.a) (w1.b/.w2.a); b=(min (w1.a/.w2.b) (w1.b/.w2.b))}
 
 (* Testy *)
 

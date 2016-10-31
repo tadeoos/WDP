@@ -1,9 +1,9 @@
 open Arytmetyka
 
-(* let a = wartosc_od_do (-1.) 1.            (* <-1, 1> *)
-let b = wartosc_dokladna (-1.)            (* <1, 1> *) *)
-let a = wartosc_od_do (6.) 8.            (* <-1, 1> *)
-let b = wartosc_dokladna (4.)            (* <1, 1> *)
+let a = wartosc_od_do (-1.) 1.            (* <-1, 1> *)
+let b = wartosc_dokladna (-1.)            (* <-1, -1> *)
+(* let a = wartosc_od_do (6.) 8.            (* <-1, 1> *) *)
+(* let b = wartosc_dokladna (4.)            (* <1, 1> *) *)
 let c = podzielic b a                     (* (-inf -1> U <1 inf) *)
 let d = plus c a                          (* (-inf, inf) *)
 let e = wartosc_dokladna 0.               (* <0, 0> *)
@@ -25,14 +25,44 @@ let t = razy n s                          (* (-inf, 0) *)
 ;;
 
 let test_podziel a b c d =
-  podzielic (wartosc_od_do a b) (wartosc_od_do c d)
-;;
+  podzielic (wartosc_od_do a b) (wartosc_od_do c d);;
+
+(* let p = druk a;; *)
+let druk a w = Printf.fprintf stdout "%s %f %f \n" a (min_wartosc w) (max_wartosc w);;
+
+druk "a" a;;
+druk "b" b;;
+druk "c" c;;
+druk "d" d;;
+druk "e" e;;
+druk "f" f;;
+druk "g" g;;
+druk "h" h;;
+druk "i" i;;
+druk "j" j;;
+druk "k" k;;
+druk "l" l;;
+druk "m" m;;
+druk "n" n;;
+druk "o" o;;
+druk "p" p;;
+druk "q" q;;
+druk "r" r;;
+druk "s" s;;
+druk "t" t;;
+
+
+assert (in_wartosc a 0. == true);
+(* assert (czy_zwykly c = true); *)
+(* assert (c = wartosc_od_do (4./.8.) (4./.6.)); *)
+(* assert ((test_podziel 6. 8. (-2.) (-2.)) = (wartosc_od_do 3. (-3.))); *)
+
 
 (* assert ((test_podziel 6. 8. (-2.) (-2.)) = (wartosc_od_do 3. (-3.))); *)
-(* assert ((min_wartosc c, max_wartosc c) = (neg_infinity, infinity)); *)
-(* assert ((sr_wartosc c) == nan) *)
-(* assert (compare (sr_wartosc c) nan = 0); *)
-(* assert (in_wartosc c 0. = false);
+assert ((min_wartosc c, max_wartosc c) = (neg_infinity, infinity));
+assert ((sr_wartosc c) == nan);
+assert (compare (sr_wartosc c) nan = 0);
+assert (in_wartosc c 0. = false);
 assert ((in_wartosc c (-1.)) && (in_wartosc c (-100000.)) && (in_wartosc c 1.) && (in_wartosc c 100000.));
 assert ((in_wartosc d 0.) && (in_wartosc d (-1.)) && (in_wartosc d (-100000.)) && (in_wartosc d 1.) && (in_wartosc d 100000.));
 assert ((min_wartosc f, max_wartosc f, sr_wartosc f) = (0., 0., 0.));
@@ -45,5 +75,4 @@ assert ((min_wartosc o, max_wartosc o, sr_wartosc o) = (neg_infinity, 0., neg_in
 assert ((min_wartosc p, max_wartosc p, compare (sr_wartosc p) nan) = (neg_infinity, infinity, 0));
 assert ((min_wartosc q, max_wartosc q, compare (sr_wartosc q) nan) = (neg_infinity, infinity, 0));
 assert ((min_wartosc r, max_wartosc r, compare (sr_wartosc r) nan) = (neg_infinity, infinity, 0));
-assert ((min_wartosc t, max_wartosc t, sr_wartosc t) = (neg_infinity, 0., neg_infinity)); *)
-(* assert ((test_podziel 6. 8. (-2.) (-2.)) = (wartosc_od_do 3. (-3.))); *)
+assert ((min_wartosc t, max_wartosc t, sr_wartosc t) = (neg_infinity, 0., neg_infinity));
