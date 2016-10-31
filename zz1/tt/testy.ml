@@ -31,7 +31,9 @@ test_warotsc f 0. (0.);;
 (* let g = razy d e                          (* <0, 0> *) *)
 (* ;; *)
 (* test_warotsc g 0. (0.);; *)
+
 let h = wartosc_dokladnosc (-10.) 50.     (* <-15, -5> *)
+
 
 let i = podzielic h e                     (* nan, przedzial pusty*)
 
@@ -47,6 +49,8 @@ let o = podzielic l m                     (* (-inf, 0) *)
 let r = minus n n                         (* (-inf, inf) *)
 let s = wartosc_dokladnosc (-0.0001) 100. (* <-0.0002, 0> *)
 let t = razy n s                          (* (-inf, 0) *)
+
+let g = podzielic j (wartosc_od_do (-4.) 3.)
 ;;
 
 druk "a" a;;
@@ -55,7 +59,7 @@ druk "c" c;;
 druk "d" d;;
 druk "e" e;;
 druk "f" f;;
-(* druk "g" g;; *)
+druk "g" g;;
 druk "h" h;;
 druk "i" i;;
 druk "j" j;;

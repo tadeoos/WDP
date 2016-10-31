@@ -20,17 +20,13 @@ let skombinuj w1 w2 = [w1.a*.w2.a; w1.a*.w2.b; w1.b*.w2.b; w1.b*.w2.a]
 
 let odwrotnosc w = {a=1./.w.b; b=1./.w.a}
 
-(* let maxw w y =
-  match w,y with
-  | none,_ -> y
-  | _,none -> w
-  | _ -> max w y
+let get_nonzero w = if w.a==0. then w.b else w.a
 
-  let maxw w y =
-    match w,y with
-    | none,_ -> y
-    | _,none -> w
-    | _ -> min w y *)
+let sign f =
+  match f with
+  | 0. -> 0.
+  | _ when f > 0. -> 1.
+  | _ when f < 0. -> -1.
 (* let druk w = Printf.fprintf stdout "a=%f b=%f" w.a w.b *)
 
 (* co zwracac tu?  *)
@@ -109,10 +105,23 @@ let razy w1 w2 =
   then {a=minl komb; b=maxl komb}
   else {a=maxl komb; b=minl komb}
 
+let pom_dziel w1 w2 =
+  if w2.a==0. && w2.b==0. then wartosc_dokladna nan else
+  match sign (w1.a*.w1.b), w1.a==w1.b, sign (w2.a*.w2.b), sign (w2.a), sign (get_nonzero w2) with
+  | 0., true, 0., _, _ -> wartosc_dokladna 0.
+  | 0., false, 0., _, _ -> {a=min 0. ((sign ((w1.a+.w1.b)*.(w2.a+.w2.b)))*.infinity); b=max 0. ((sign ((w1.a+.w1.b)*.(w2.a+.w2.b)))*.infinity) }
+  | 1., _, 0., 1.,1. -> {a=min (w1.a/.(get_nonzero w2)) (w1.b/.(get_nonzero w2));b=infinity}
+  | 1., _, 0., 1.,-1. -> {b=max (w1.a/.(get_nonzero w2)) (w1.b/.(get_nonzero w2));a=neg_infinity}
+  | 1., _, 0., -1.,-1. -> {a=min (w1.a/.(get_nonzero w2)) (w1.b/.(get_nonzero w2));b=infinity}
+  | 1., _, 0., -1.,1. -> {b=max (w1.a/.(get_nonzero w2)) (w1.b/.(get_nonzero w2));a=neg_infinity}
+  | _ -> wartosc_dokladna nan
+
 let podzielic w1 w2 =
-  match in_wartosc w2 0. with
-  | false -> razy w1 (odwrotnosc w2)
-  | true -> {a=max (w1.a/.w2.a) (w1.b/.w2.a); b=(min (w1.a/.w2.b) (w1.b/.w2.b))}
+  match in_wartosc w1 0., in_wartosc w2 0. with
+  | false, false -> razy w1 (odwrotnosc w2)
+  | false, true -> {a=max (w1.a/.w2.a) (w1.b/.w2.a); b=(min (w1.a/.w2.b) (w1.b/.w2.b))}
+  | true, true -> if List.mem 0. [w1.a;w1.b;w2.a;w2.b] then pom_dziel w1 w2 else {b=infinity; a=neg_infinity}
+  | true, false -> if List.mem 0. [w1.a;w1.b;w2.a;w2.b] then pom_dziel w1 w2 else {b=infinity; a=neg_infinity}
 
 (* Testy *)
 
