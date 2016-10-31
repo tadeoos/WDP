@@ -106,23 +106,28 @@ let razy w1 w2 =
   else {a=maxl komb; b=minl komb}
 
 let pom_dziel w1 w2 =
+  let p1 = w1.a/.(get_nonzero w2) in
+  let p2 = w1.b/.(get_nonzero w2) in
   if w2.a==0. && w2.b==0. then wartosc_dokladna nan else
-  match sign (w1.a*.w1.b), w1.a==w1.b, sign (w2.a*.w2.b), sign (w2.a), sign (get_nonzero w2) with
-  | 0., true, 0., _, _ -> wartosc_dokladna 0.
-  | 0., false, 0., _, _ -> {a=min 0. ((sign ((w1.a+.w1.b)*.(w2.a+.w2.b)))*.infinity); b=max 0. ((sign ((w1.a+.w1.b)*.(w2.a+.w2.b)))*.infinity) }
-  | 1., _, 0., 1.,1. -> {a=min (w1.a/.(get_nonzero w2)) (w1.b/.(get_nonzero w2));b=infinity}
-  | 1., _, 0., 1.,-1. -> {b=max (w1.a/.(get_nonzero w2)) (w1.b/.(get_nonzero w2));a=neg_infinity}
-  | 1., _, 0., -1.,-1. -> {a=min (w1.a/.(get_nonzero w2)) (w1.b/.(get_nonzero w2));b=infinity}
-  | 1., _, 0., -1.,1. -> {b=max (w1.a/.(get_nonzero w2)) (w1.b/.(get_nonzero w2));a=neg_infinity}
+  match sign (w1.a*.w1.b), w1.a==w1.b, sign (w2.a*.w2.b), sign (sign (w2.a)*.sign (get_nonzero w2)) with
+  | 0., true, 0., _-> wartosc_dokladna 0.
+  | 0., false, 0., _ -> {a=min 0. ((sign ((w1.a+.w1.b)*.(w2.a+.w2.b)))*.infinity); b=max 0. ((sign ((w1.a+.w1.b)*.(w2.a+.w2.b)))*.infinity) }
+  | 1., _, 0., 1. -> {a=min p1 p2; b=infinity}
+  | 1., _, 0., -1. -> {a=neg_infinity; b=max p1 p2}
+  | 1., _, -1., _ -> {a=w1.b/.w2.b; b=w1.b/.w2.a}
+  | -1., _, 1., _ when sign w2.b==1.-> {a=w1.a/.w2.b; b=w1.b/.w2.b}
+  | -1., _, 1., _ when sign w2.b==(-1.)-> {a=w1.b/.w2.a; b=w1.a/.w2.a}
   | _ -> wartosc_dokladna nan
 
 let podzielic w1 w2 =
   match in_wartosc w1 0., in_wartosc w2 0. with
-  | false, false -> razy w1 (odwrotnosc w2)
+  | false, false when czy_zwykly w1 && czy_zwykly w2-> razy w1 (odwrotnosc w2)
+  | false, false when czy_zwykly w1 -> pom_dziel w1 w2
+  | false, false when czy_zwykly w2 -> pom_dziel w1 w2
   | false, true -> {a=max (w1.a/.w2.a) (w1.b/.w2.a); b=(min (w1.a/.w2.b) (w1.b/.w2.b))}
   | true, true -> if List.mem 0. [w1.a;w1.b;w2.a;w2.b] then pom_dziel w1 w2 else {b=infinity; a=neg_infinity}
   | true, false -> if List.mem 0. [w1.a;w1.b;w2.a;w2.b] then pom_dziel w1 w2 else {b=infinity; a=neg_infinity}
-
+  | _ -> wartosc_dokladna nan
 (* Testy *)
 
 
