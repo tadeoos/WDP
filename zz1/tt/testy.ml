@@ -219,10 +219,19 @@ assert (t7 = (wartosc_od_do (6.) (2.)));;
 let t7 = minus (wartosc_od_do (7.) (-2.)) (wartosc_od_do (-3.) (-1.));;
 assert (t7 = (wartosc_od_do (8.) (1.)));;
 
-(* [7;-2]/[5;-9]=[2/9;-0.4] *)
+(* [7;-2]/[5;-9]=[0;-0] *)
 let t7 = podzielic (wartosc_od_do (7.) (-2.)) (wartosc_od_do (5.) (-9.));;
-druk "t7" t7;;
-assert (t7 = (wartosc_od_do (2./.9.) (-0.4)));;
+assert (t7 = (wartosc_od_do (neg_infinity) (infinity)));;
 
+(* [5;4]/[-2;-3]=[-inf;inf] *)
+let t7 = podzielic (wartosc_od_do (5.) (4.)) (wartosc_od_do (-2.) (-3.));;
+assert (t7 = (wartosc_od_do (neg_infinity) (infinity)));;
 
+(* [2;-4]/[1;-10]=[0;-0] *)
+let t7 = podzielic (wartosc_od_do (2.) (-4.)) (wartosc_od_do (1.) (-10.));;
+(* druk "t7" t7;; *)
+assert (t7 = (wartosc_od_do (neg_infinity) (infinity)));;
+
+assert ((wartosc_od_do (0.) (0.)) != (wartosc_od_do (0.) (-0.)));;
+(* assert ((czy_zwykly (wartosc_od_do (0.) (-0.))) = false);; *)
 Printf.fprintf stdout "\n--- ALL tests PASSED ---\n";;

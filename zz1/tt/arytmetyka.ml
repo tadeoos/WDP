@@ -7,7 +7,10 @@ type wartosc = { a : float; b : float }
 (* METODY POMOCNICZE *)
 
 (* zwykły przedział to taki, którego poczatek jest mniejszy od konca *)
-let czy_zwykly w = w.a<=w.b
+let czy_zwykly w =
+  match w.a, w.b with
+  | _ -> w.a<=w.b
+
 
 (* zwroc czy float jest orkeslony *)
 let okreslone f = f != neg_infinity || f != infinity || f != nan
@@ -67,7 +70,7 @@ let in_wartosc w x =
   | false -> w.a <= x || w.b >= x
 
 let min_wartosc w =
-  let _ = Printf.fprintf stdout "a= %f; b= %f \n" w.a w.b in
+  (* let _ = Printf.fprintf stdout "a= %f; b= %f \n" w.a w.b in *)
   match czy_zwykly w with
   | true -> w.a
   | false -> neg_infinity
@@ -99,8 +102,6 @@ let minus w1 w2 =
   | true, false -> czy_cala {a = min (w1.a-.w2.b) (w1.b-.w2.b); b = max (w1.b-.w2.a) (w1.a-.w2.a)}
   | false, true -> czy_cala {a = min (w1.a-.w2.b) (w1.a-.w2.a); b = max (w1.b-.w2.a) (w1.b-.w2.b)}
 
-
-
 let rec razy w1 w2 =
   (* let _ = Printf.fprintf stdout "razy! w1=%f %f; w2=%f %f \n" w1.a w1.b w2.a w2.b in *)
   let pom_raz w1 w2 =
@@ -115,6 +116,7 @@ let rec razy w1 w2 =
   | false, false -> pom_raz w1 w2
 
 let podzielic w1 w2 =
+  (* assert ((czy_zwykly (wartosc_od_do (0.) (-0.))) = false); *)
   let pom_dziel w1 w2 =
     let p1 = w1.a/.(get_nonzero w2) in
     let p2 = w1.b/.(get_nonzero w2) in
@@ -128,7 +130,7 @@ let podzielic w1 w2 =
     | 1., _, -1., _ -> {a=w1.b/.w2.b; b=w1.b/.w2.a}
     | -1., _, 1., _ when sign w2.b==1.-> {a=w1.a/.w2.b; b=w1.b/.w2.b}
     | -1., _, 1., _ when sign w2.b==(-1.)-> {a=w1.b/.w2.a; b=w1.a/.w2.a}
-    | -1., _, -1., _ -> {a = min (w1.a/.w2.a) (w1.b/.w2.b); b = max (w1.b/.w2.a) (w1.a/.w2.b)}
+    | -1., _, -1., _ -> wartosc_od_do (neg_infinity) (infinity)
     | _ -> let _ = Printf.fprintf stdout "auc! %f %f %f %f\n" w1.a w1.b w2.a w2.b in failwith "nielapany wyjatek"
   in match in_wartosc w1 0., in_wartosc w2 0. with
   | false, false when czy_zwykly w1 && czy_zwykly w2-> razy w1 (odwrotnosc w2)
