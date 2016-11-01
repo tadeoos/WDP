@@ -195,6 +195,33 @@ assert (t7 = (wartosc_od_do (2.) (-5.)));;
 let t7 = minus (wartosc_od_do (0.) (2.)) (wartosc_od_do (3.) (-6.));;
 assert (t7 = (wartosc_od_do (6.) (-1.)));;
 
+(* [1;2]-[-3;7]= [-6;5] *)
+let t7 = minus (wartosc_od_do (1.) (2.)) (wartosc_od_do (-3.) (7.));;
+assert (t7 = (wartosc_od_do (-6.) (5.)));;
+
+(* [1;2]+[-3;7]= [-6;5] *)
+let t7 = plus (wartosc_od_do (1.) (2.)) (wartosc_od_do (-3.) (7.));;
+assert (t7 = (wartosc_od_do (-2.) (9.)));;
+
+(* [7;-2]+[5;-1]=[-inf;inf] *)
+let t7 = plus (wartosc_od_do (7.) (-2.)) (wartosc_od_do (5.) (-1.));;
+assert (t7 = (wartosc_od_do (neg_infinity) (infinity)));;
+
+(* [7;-2]-[5;-1]=[-inf;inf] *)
+let t7 = minus (wartosc_od_do (7.) (-2.)) (wartosc_od_do (5.) (-1.));;
+assert (t7 = (wartosc_od_do (neg_infinity) (infinity)));;
+
+(* [7;-2]-[5;-8]=[6;2] *)
+let t7 = minus (wartosc_od_do (7.) (-2.)) (wartosc_od_do (5.) (-8.));;
+assert (t7 = (wartosc_od_do (6.) (2.)));;
+
+(* [7;-2]-[-3;-1]=[4;-4] *)
+let t7 = minus (wartosc_od_do (7.) (-2.)) (wartosc_od_do (-3.) (-1.));;
+assert (t7 = (wartosc_od_do (8.) (1.)));;
+
+(* [7;-2]-[-3;-1]=[4;-4] *)
+let t7 = minus (wartosc_od_do (7.) (-2.)) (wartosc_od_do (-3.) (-1.));;
+assert (t7 = (wartosc_od_do (8.) (1.)));;
 
 
 Printf.fprintf stdout "\n--- ALL tests PASSED ---\n";;
