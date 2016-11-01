@@ -173,7 +173,13 @@ let t7 = razy (wartosc_od_do (0.) (2.)) (wartosc_od_do (-10.) (-6.));;
 assert (t7 = (wartosc_od_do (-20.) (0.)));;
 
 let t7 = minus (wartosc_od_do (3.) (1.)) (wartosc_od_do (1.) (2.));;
-assert (t7 = (wartosc_od_do (1.) (-2.)));;
+assert (t7 = (wartosc_od_do (1.) (0.)));;
+
+let t7 = minus (wartosc_od_do (3.) (1.)) (wartosc_od_do (-3.) (2.));;
+assert (t7 = (wartosc_od_do (neg_infinity) (infinity)));;
+
+let t7 = minus (wartosc_od_do (4.) (-7.)) (wartosc_od_do (-2.) (2.));;
+assert (t7 = (wartosc_od_do (2.) (-5.)));;
 
 let t7 = minus (wartosc_od_do (0.) (2.)) (wartosc_od_do (3.) (-6.));;
 assert (t7 = (wartosc_od_do (6.) (-1.)));;
