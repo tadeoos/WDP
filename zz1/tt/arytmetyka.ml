@@ -85,18 +85,21 @@ let sr_wartosc w =
 
 let plus w1 w2 =
   match czy_zwykly w1, czy_zwykly w2 with
-  | true, false -> czy_cala {a=(w1.a +. w2.a); b=(w1.b +. w2.b)}
   | true, true -> {a=(w1.a +. w2.a); b=(w1.b +. w2.b)}
-  | false, true -> czy_cala {a=(w1.a +. (min w2.a w2.b)); b=(w1.b +. (max w2.a w2.b))}
   | false, false -> czy_cala {a=(w1.b +. w2.a); b=(w1.a +. w2.b)}
+  | true, false -> czy_cala {a=(w1.a +. w2.a); b=(w1.b +. w2.b)}
+  | false, true -> czy_cala {a=(w1.a +. (min w2.a w2.b)); b=(w1.b +. (max w2.a w2.b))}
   (* | true, false -> {a=w1. ;b=} *)
 
 let minus w1 w2 =
   match czy_zwykly w1, czy_zwykly w2 with
   | true, true -> {a = (w1.a -. w2.b); b=(w1.b -. w2.a)}
-  | false, false -> czy_cala {a = (w1.a +. (min w2.a w2.b)); b = (w1.a -. (max 0. w2.b))}
+  (* | false, false -> czy_cala {a = (w1.a +. (min w2.a w2.b)); b = (w1.a -. (max 0. w2.b))} *)
+  | false, false -> czy_cala {a = max (w1.b-.w2.a) (w1.b-.w2.b); b = min (w1.a-.w2.a) (w1.a-.w2.b)}
   | true, false -> czy_cala {a = min (w1.a-.w2.b) (w1.b-.w2.b); b = max (w1.b-.w2.a) (w1.a-.w2.a)}
-  | false, true -> czy_cala {a = w1.a -. (max w2.a w2.b); b = max (w1.b-.w2.a) (w1.b-.w2.b)}
+  | false, true -> czy_cala {a = min (w1.a-.w2.b) (w1.a-.w2.a); b = max (w1.b-.w2.a) (w1.b-.w2.b)}
+
+
 
 let rec razy w1 w2 =
   (* let _ = Printf.fprintf stdout "razy! w1=%f %f; w2=%f %f \n" w1.a w1.b w2.a w2.b in *)
