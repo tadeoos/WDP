@@ -70,7 +70,7 @@ let in_wartosc w x =
   | false -> w.a <= x || w.b >= x
 
 let min_wartosc w =
-  (* let _ = Printf.fprintf stdout "a= %f; b= %f \n" w.a w.b in *)
+  let _ = Printf.fprintf stdout "a= %f; b= %f \n" w.a w.b in
   match czy_zwykly w with
   | true -> w.a
   | false -> neg_infinity
@@ -128,8 +128,9 @@ let podzielic w1 w2 =
     | 1., _, 0., 1. -> {a=min p1 p2; b=infinity}
     | 1., _, 0., -1. -> {a=neg_infinity; b=max p1 p2}
     | 1., _, -1., _ -> {a=w1.b/.w2.b; b=w1.b/.w2.a}
-    | -1., _, 1., _ when sign w2.b==1.-> {a=w1.a/.w2.b; b=w1.b/.w2.b}
-    | -1., _, 1., _ when sign w2.b==(-1.)-> {a=w1.b/.w2.a; b=w1.a/.w2.a}
+    | 1., _, 1., _ -> {a=w1.b/.w2.a; b=w1.a/.w2.a}
+    | -1., _, 1., _ when sign w2.b=1.-> {a=w1.a/.w2.b; b=w1.b/.w2.b}
+    | -1., _, 1., _ when sign w2.b=(-1.)-> {a=w1.b/.w2.a; b=w1.a/.w2.a}
     | -1., _, -1., _ -> wartosc_od_do (neg_infinity) (infinity)
     | _ -> let _ = Printf.fprintf stdout "auc! %f %f %f %f\n" w1.a w1.b w2.a w2.b in failwith "nielapany wyjatek"
   in match in_wartosc w1 0., in_wartosc w2 0. with
@@ -137,8 +138,8 @@ let podzielic w1 w2 =
   | false, false -> pom_dziel w1 w2
   | false, true -> {a=max (w1.a/.w2.a) (w1.b/.w2.a); b=(min (w1.a/.w2.b) (w1.b/.w2.b))}
   | true, true -> if List.mem 0. [w1.a;w1.b;w2.a;w2.b] then pom_dziel w1 w2 else {b=infinity; a=neg_infinity}
-  | true, false -> if List.mem 0. [w1.a;w1.b;w2.a;w2.b] then pom_dziel w1 w2 else {b=infinity; a=neg_infinity}
-
+  (* | true, false -> if List.mem 0. [w1.a;w1.b;w2.a;w2.b] then pom_dziel w1 w2 else {b=infinity; a=neg_infinity} *)
+  | true, false -> pom_dziel w1 w2
 (* Testy *)
 
 

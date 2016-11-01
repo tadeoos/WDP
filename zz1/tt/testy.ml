@@ -14,6 +14,10 @@ let test_wartosc a b c =
 let druk a w =
   Printf.fprintf stdout "%s %f %f \n" a (min_wartosc w) (max_wartosc w);;
 
+let t7 = podzielic (wartosc_od_do (5.) (4.)) (wartosc_od_do (-2.) (-2.));;
+druk "t7" t7;;
+assert (t7 = (wartosc_od_do (-2.) (-2.5)));;
+
 
 let a = wartosc_od_do (-1.) 1.            (* <-1, 1> *)
 let b = wartosc_dokladna (-1.)            (* <-1, -1> *)
@@ -231,6 +235,11 @@ assert (t7 = (wartosc_od_do (neg_infinity) (infinity)));;
 let t7 = podzielic (wartosc_od_do (2.) (-4.)) (wartosc_od_do (1.) (-10.));;
 (* druk "t7" t7;; *)
 assert (t7 = (wartosc_od_do (neg_infinity) (infinity)));;
+
+(* [5;4]/[-2;-2]=[-2;-2.5] *)
+let t7 = podzielic (wartosc_od_do (5.) (4.)) (wartosc_od_do (-2.) (-2.));;
+druk "t7" t7;;
+assert (t7 = (wartosc_od_do (-2.) (-2.5)));;
 
 assert ((wartosc_od_do (0.) (0.)) != (wartosc_od_do (0.) (-0.)));;
 (* assert ((czy_zwykly (wartosc_od_do (0.) (-0.))) = false);; *)
