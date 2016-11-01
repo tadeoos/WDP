@@ -241,6 +241,6 @@ let t7 = podzielic (wartosc_od_do (5.) (4.)) (wartosc_od_do (-2.) (-2.));;
 druk "t7" t7;;
 assert (t7 = (wartosc_od_do (-2.) (-2.5)));;
 
-assert ((wartosc_od_do (0.) (0.)) != (wartosc_od_do (0.) (-0.)));;
+assert ((wartosc_od_do (0.) (0.)) = (wartosc_od_do (0.) (-0.)));;
 (* assert ((czy_zwykly (wartosc_od_do (0.) (-0.))) = false);; *)
 Printf.fprintf stdout "\n--- ALL tests PASSED ---\n";;
