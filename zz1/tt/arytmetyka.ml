@@ -7,7 +7,10 @@ type wartosc = { a : float; b : float }
 (* METODY POMOCNICZE *)
 
 (* zwykły przedział to taki, którego poczatek jest mniejszy od konca *)
-let czy_zwykly w = w.a<=w.b || (w.a==neg_infinity && w.b==infinity)
+let czy_zwykly w = w.a<=w.b
+
+(* zwroc czy float jest orkeslony *)
+let okreslone f = f != neg_infinity || f != infinity || f != nan
 
 let skombinuj w1 w2 = [w1.a*.w2.a; w1.a*.w2.b; w1.b*.w2.b; w1.b*.w2.a]
 
@@ -75,9 +78,10 @@ let max_wartosc w =
   | false -> infinity
 
 let sr_wartosc w =
-  match czy_zwykly w with
-  | true -> (w.a +. w.b)/.2.
-  | false -> nan
+  (* let _ = Printf.fprintf stdout "sr war! %f %f \n" w.a w.b in *)
+  match czy_zwykly w, (okreslone w.a || okreslone w.b) with
+  | true, true -> (w.a +. w.b)/.2.
+  | _, _ -> nan
 
 let plus w1 w2 =
   match czy_zwykly w1, czy_zwykly w2 with
@@ -94,37 +98,35 @@ let minus w1 w2 =
   | true, false -> czy_cala {a = min (w1.a-.w2.b) (w1.b-.w2.b); b = max (w1.b-.w2.a) (w1.a-.w2.a)}
   | false, true -> czy_cala {a = w1.a -. (max w2.a w2.b); b = max (w1.b-.w2.a) (w1.b-.w2.b)}
 
-let pom_raz w1 w2 =
-  match in_wartosc w1 0. || in_wartosc w2 0. with
-  | true -> wartosc_od_do (neg_infinity) (infinity)
-  | false -> {b=max (w1.a*.w2.b) (w1.b*.w2.a); a=min (w1.a*.w2.a) (w1.b*.w2.b)}
-
 let rec razy w1 w2 =
   (* let _ = Printf.fprintf stdout "razy! w1=%f %f; w2=%f %f \n" w1.a w1.b w2.a w2.b in *)
-  let komb = skombinuj w1 w2
+  let pom_raz w1 w2 =
+    match in_wartosc w1 0. || in_wartosc w2 0. with
+    | true -> wartosc_od_do (neg_infinity) (infinity)
+    | false -> {b=max (w1.a*.w2.b) (w1.b*.w2.a); a=min (w1.a*.w2.a) (w1.b*.w2.b)}
+  and komb = skombinuj w1 w2
   in match czy_zwykly w1, czy_zwykly w2 with
   | true, true -> {a=minl komb; b=maxl komb}
   | true, false -> {a=min (w1.a*.w2.a) (w1.b*.w2.a); b=max (w1.a*.w2.b) (w1.b*.w2.b)}
   | false, true -> razy w2 w1
   | false, false -> pom_raz w1 w2
 
-let pom_dziel w1 w2 =
-  let p1 = w1.a/.(get_nonzero w2) in
-  let p2 = w1.b/.(get_nonzero w2) in
-  if w2.a==0. && w2.b==0. then wartosc_dokladna nan else
-  (* jak rozlozony jest licznik, czy jest dokladna wartoscia, jak rozlozony jest mianownik,  *)
-  match sign (w1.a*.w1.b), w1.a==w1.b, sign (w2.a*.w2.b), sign (get_nonzero w2) with
-  | 0., true, 0., _ -> wartosc_dokladna 0.
-  | 0., false, 0., _ -> {a=min 0. ((sign ((w1.a+.w1.b)*.(w2.a+.w2.b)))*.infinity); b=max 0. ((sign ((w1.a+.w1.b)*.(w2.a+.w2.b)))*.infinity)}
-  | 1., _, 0., 1. -> {a=min p1 p2; b=infinity}
-  | 1., _, 0., -1. -> {a=neg_infinity; b=max p1 p2}
-  | 1., _, -1., _ -> {a=w1.b/.w2.b; b=w1.b/.w2.a}
-  | -1., _, 1., _ when sign w2.b==1.-> {a=w1.a/.w2.b; b=w1.b/.w2.b}
-  | -1., _, 1., _ when sign w2.b==(-1.)-> {a=w1.b/.w2.a; b=w1.a/.w2.a}
-  | _ -> let _ = Printf.fprintf stdout "auc! %f %f %f %f\n" w1.a w1.b w2.a w2.b in failwith "nielapany wyjatek"
-
 let podzielic w1 w2 =
-  match in_wartosc w1 0., in_wartosc w2 0. with
+  let pom_dziel w1 w2 =
+    let p1 = w1.a/.(get_nonzero w2) in
+    let p2 = w1.b/.(get_nonzero w2) in
+    if w2.a==0. && w2.b==0. then wartosc_dokladna nan else
+    (* jak rozlozony jest licznik, czy jest dokladna wartoscia, jak rozlozony jest mianownik,  *)
+    match sign (w1.a*.w1.b), w1.a==w1.b, sign (w2.a*.w2.b), sign (get_nonzero w2) with
+    | 0., true, 0., _ -> wartosc_dokladna 0.
+    | 0., false, 0., _ -> {a=min 0. ((sign ((w1.a+.w1.b)*.(w2.a+.w2.b)))*.infinity); b=max 0. ((sign ((w1.a+.w1.b)*.(w2.a+.w2.b)))*.infinity)}
+    | 1., _, 0., 1. -> {a=min p1 p2; b=infinity}
+    | 1., _, 0., -1. -> {a=neg_infinity; b=max p1 p2}
+    | 1., _, -1., _ -> {a=w1.b/.w2.b; b=w1.b/.w2.a}
+    | -1., _, 1., _ when sign w2.b==1.-> {a=w1.a/.w2.b; b=w1.b/.w2.b}
+    | -1., _, 1., _ when sign w2.b==(-1.)-> {a=w1.b/.w2.a; b=w1.a/.w2.a}
+    | _ -> let _ = Printf.fprintf stdout "auc! %f %f %f %f\n" w1.a w1.b w2.a w2.b in failwith "nielapany wyjatek"
+  in match in_wartosc w1 0., in_wartosc w2 0. with
   | false, false when czy_zwykly w1 && czy_zwykly w2-> razy w1 (odwrotnosc w2)
   | false, false -> pom_dziel w1 w2
   | false, true -> {a=max (w1.a/.w2.a) (w1.b/.w2.a); b=(min (w1.a/.w2.b) (w1.b/.w2.b))}
