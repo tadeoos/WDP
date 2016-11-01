@@ -219,9 +219,10 @@ assert (t7 = (wartosc_od_do (6.) (2.)));;
 let t7 = minus (wartosc_od_do (7.) (-2.)) (wartosc_od_do (-3.) (-1.));;
 assert (t7 = (wartosc_od_do (8.) (1.)));;
 
-(* [7;-2]-[-3;-1]=[4;-4] *)
-let t7 = minus (wartosc_od_do (7.) (-2.)) (wartosc_od_do (-3.) (-1.));;
-assert (t7 = (wartosc_od_do (8.) (1.)));;
+(* [7;-2]/[5;-9]=[2/9;-0.4] *)
+let t7 = podzielic (wartosc_od_do (7.) (-2.)) (wartosc_od_do (5.) (-9.));;
+druk "t7" t7;;
+assert (t7 = (wartosc_od_do (2./.9.) (-0.4)));;
 
 
 Printf.fprintf stdout "\n--- ALL tests PASSED ---\n";;
