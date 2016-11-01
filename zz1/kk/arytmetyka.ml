@@ -17,7 +17,7 @@ type wartosc = { poczatek : float ; koniec : float };;
 let wartosc_dokladnosc x p = if (x == infinity) || (x == neg_infinity) || (x == nan) || (p == infinity) || (p == neg_infinity) || (p == nan) then
 								failwith "Niepoprawny argument funckji. x oraz p musza byc skonczonymi liczbami rzeczywistymi."
 							else
-								{poczatek = (x -. x *. p /. 100.); koniec = (x +. x *. p /. 100.)}
+								{poczatek = (x -. (abs_float x) *. p /. 100.); koniec = (x +. (abs_float x) *. p /. 100.)}
 ;;
 
 (* wartosc_od_do x y = [x;y]         *)
@@ -95,6 +95,7 @@ let minus w v =
 			{poczatek = (min_wartosc w -. max_wartosc v) ; koniec = (max_wartosc w -. min_wartosc v)} (* wynikiem jest przedzial lub cala prosta, jesli ktorys z przedzialow byl cala prosta *)
 ;;
 
+(* ponizej moze miec sens zamienic ify na match, bo i tak chce wiedziec ktora wartosc jest przedzialem, a ktora antyprzedzialem *)
 let razy w v =
 	let czy_przedzial z = (w.poczatek <= w.koniec) in
 	if (czy_przedzial w) && (czy_przedzial v) then
@@ -133,9 +134,9 @@ let razy w v =
 			if (in_wartosc w 0.) || (in_wartosc v 0.) then
 				{poczatek = neg_infinity; koniec = infinity}  (* wynikiem jest cala prosta rzeczywista *)
 			else
-				{poczatek = max (w.poczatek *. v.poczatek) (max (w.poczatek *. v.koniec) (max (w.koniec *. v.poczatek) (w.koniec *. v.koniec)))
+				{poczatek = max (w.poczatek *. v.poczatek) (w.koniec *. v.koniec)
 				;
-				koniec  = min (w.poczatek *. v.poczatek) (min (w.poczatek *. v.koniec) (min (w.koniec *. v.poczatek) (w.koniec *. v.koniec)))}
+				koniec  = min (w.poczatek *. v.poczatek) (w.koniec *. v.koniec)}
 				(* wynikiem jest przedzial *)
 ;;
 
